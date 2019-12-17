@@ -59,6 +59,7 @@ public class BasicOpMode_Iterative extends OpMode
     private DcMotor frontRight = null;
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
+    private DcMotor intake = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -74,6 +75,7 @@ public class BasicOpMode_Iterative extends OpMode
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
+        intake = hardwareMap.get(DcMotor.class, "intake");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -81,6 +83,7 @@ public class BasicOpMode_Iterative extends OpMode
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
+        intake.setDirection(DcMotor.Direction.FORWARD);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -111,6 +114,8 @@ public class BasicOpMode_Iterative extends OpMode
         double backLeftPower;
         double frontRightPower;
         double backRightPower;
+        double intakeRightPower;
+        double intakeLeftPower;
 
         // Choose to drive using either Tank Mode, or POV Mode
         // Comment out the method that's not used.  The default below is POV.
@@ -147,6 +152,21 @@ public class BasicOpMode_Iterative extends OpMode
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
 
+        // Intake code
+        boolean dpadUp = gamepad1.dpad_up;
+        boolean dpadDown = gamepad1.dpad_down;
+        boolean bIsPressed = gamepad1.b;
+        int intakeState = 0; // 0 = rest, 1 = forward, -1 = backward
+
+        if (bIsPressed) {
+            intakeState = 0;
+        } else if (dpadUp) {
+            intakeState = 1;
+        } else if (dpad_down) {
+            intakeState = -1;
+        }
+
+        intake.setPower(intakeState);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
